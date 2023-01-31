@@ -1,0 +1,146 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "logAnalyticsNamespaceName": {
+      "value": "bureau-mgmt-log"
+    },
+    "storageAccountName": {
+      "value": "bureaumgmtpolcompst"
+    },
+    "location": {
+      "value": "eastus2"
+    },
+    "skuName": {
+      "value": "Standard_LRS"
+    },
+    "rgName": {
+      "value": "bureau-mgmt-policyCompliance-rg"
+    },
+    "appInsightsName": {
+      "value": "bureau-mgmt-policyCompliance-appi"
+    },
+    "keyvaultName": {
+      "value": "bureau-mgmt-mainKV-kv"
+    },
+    "tenantId": {
+      "value": "2373466a-a251-4a33-8eb7-b6ef9871f0ee"
+    },
+    "enabledForDeployment": {
+      "value": false
+    },
+    "enabledForTemplateDeployment": {
+      "value": true
+    },
+    "enabledForDiskEncryption": {
+      "value": false
+    },
+    "enabledRbacAuthorization": {
+      "value": false
+    },
+    "accessPolicies": {
+      "value": [
+        {
+          "objectId": "6e41ff66-c8ba-4f0e-bd14-05a948f64e14",
+          "tenantId": "2373466a-a251-4a33-8eb7-b6ef9871f0ee",
+          "permissions": {
+            "keys": [
+              "Get",
+              "List",
+              "Update",
+              "Create",
+              "Import",
+              "Delete",
+              "Recover",
+              "Backup",
+              "Restore",
+              "GetRotationPolicy",
+              "SetRotationPolicy",
+              "Rotate"
+            ],
+            "secrets": [
+              "Get",
+              "List",
+              "Set",
+              "Delete",
+              "Recover",
+              "Backup",
+              "Restore"
+            ],
+            "certificates": [
+              "Get",
+              "List",
+              "Update",
+              "Create",
+              "Import",
+              "Delete",
+              "Recover",
+              "Backup",
+              "Restore",
+              "ManageContacts",
+              "ManageIssuers",
+              "GetIssuers",
+              "ListIssuers",
+              "SetIssuers",
+              "DeleteIssuers"
+            ]
+          },
+          "applicationId": ""
+        },
+        {
+          "objectId": "16dfa18e-8691-4943-9a87-da7002a53c96",
+          "tenantId": "2373466a-a251-4a33-8eb7-b6ef9871f0ee",
+          "permissions": {
+            "certificates": [],
+            "keys": [],
+            "secrets": [
+              "Get",
+              "List",
+              "Set",
+              "Delete",
+              "Recover",
+              "Backup",
+              "Restore"
+            ]
+          },
+          "applicationId": null
+        }
+      ]
+    },
+    "publicNetworkAccess": {
+      "value": "Disabled"
+    },
+    "enableSoftDelete": {
+      "value": true
+    },
+    "softDeleteRetentionInDays": {
+      "value": 90
+    },
+    "networkAcls": {
+      "value": {
+        "defaultAction": "deny",
+        "bypass": "AzureServices",
+        "ipRules": [],
+        "virtualNetworkRules": []        
+      }
+    },
+    "linuxFxVersion": {
+      "value": "Python|3.9"
+    },
+    "appName": {
+      "value": "bureau-mgmt-policyCompliance-func"
+    },
+    "runtime": {
+      "value": "python"
+    },
+    "functionAppKeySecretName": {
+      "value": "bureau-mgmt-policyCompliance-funcKey"
+    },
+    "logAnalysticsWorkspaceSecretName": {
+      "value": "bureau-mgmt-logPrimarySharedKey"
+    },
+    "storageAccountKind": {
+      "value": "StorageV2"
+    }
+  }
+}
