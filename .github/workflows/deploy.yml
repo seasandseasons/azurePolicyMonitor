@@ -80,12 +80,12 @@ jobs:
       
       - name: Archive files echo
         run: |
-          echo "The build id is: ${{ env.Build.BuildId }}"
+          echo "The build id is: ${{ github.run_id }}"
 
       # Uploads zip file
       - uses: actions/upload-artifact@v3
         with:
-          name: "${{ env.Build.BuildId }}.zip"
+          name: "${{ github.run_id }}.zip"
           path: "${{ env.functionWorkingDirectory }}"
           #artifact_type: zip
 
