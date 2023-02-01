@@ -82,7 +82,8 @@ jobs:
       - uses: azure/upload-artifact@v3
         with:
           name: "${{ env.Build.BuildId }}.zip"
-          path: "${{ env.functionWorkingDirectory }}"
+          path: ./function
+          #path: "${{ env.functionWorkingDirectory }}"
           artifact_type: zip
 
 
