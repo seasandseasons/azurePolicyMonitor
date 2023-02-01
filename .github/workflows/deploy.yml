@@ -14,7 +14,7 @@ env:
   functionWorkingDirectory: ./function
 
 permissions:
-  id-token: write
+  id-token: none
   contents: read
 
 jobs:
