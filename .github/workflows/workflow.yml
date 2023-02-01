@@ -1,0 +1,22 @@
+name: deploy resource group and storage account
+
+on: 
+  workflow_dispatch:
+    branches:
+      - main
+
+jobs:
+  
+  # Calls lint workflow to lint the Bicep file
+  lint: 
+
+    uses: seasandseasons/Workflows/.github/workflows/lint.yml@ce5d29ee397122e26b702326380658e8786df351
+
+  # Calls deploy workflow to deploy
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    needs: lint
+    secrets:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}

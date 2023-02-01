@@ -1,0 +1,196 @@
+name: deploy project
+
+on: 
+  workflow_call:
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+env: 
+  functionWorkingDirectory: ./function
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  # validate:
+  #   runs-on: ubuntu-latest
+  #   steps:        
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v3
+
+  #     # Logs into Azure
+  #     - uses: azure/login@v1
+  #       name: Sign in to Azure
+  #       with: 
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  #     # Uses ARM preflight validation to check for problems   
+  #     - uses: azure/arm-deploy@v1
+  #       name: Run preflight validation
+  #       with:
+  #         scope: subscription
+  #         region: eastus2
+  #         deploymentName: ${{ github.run_number }}
+  #         template: ./deploy/main.bicep
+  #         parameters: ./deploy/main.parameters.json
+  #         deploymentMode: Validate
+  
+  # preview:
+  #   runs-on: ubuntu-latest
+  #   needs: validate
+  #   steps:
+
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v3
+    
+  #     # Logs into Azure
+  #     - uses: azure/login@v1
+  #       name: Sign in to Azure
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  #   # Uses ARM preflight validation to check for problems
+  #     - uses: azure/arm-deploy@v1
+  #       name: Run what-if
+  #       with:
+  #         scope: subscription
+  #         region: eastus2
+  #         failOnStdErr: false
+  #         template: ./deploy/main.bicep
+  #         parameters: ./deploy/main.parameters.json
+  #         # additionalArguments: --what-if
+
+  buildFunctionApp:
+    runs-on: ubuntu-latest
+    needs: preview
+    steps:
+
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      
+      # Uploads zip file
+      - uses: azure/upload-artifact@v3
+        with:
+          name: "${{ env.Build.BuildId }}.zip"
+          path: "${{ env.functionWorkingDirectory }}"
+          artifact_type: zip
+
+
+  # createCDN:
+  #   runs-on: ubuntu-latest
+  #   needs: buildStaticWebsite
+  #   steps:
+
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v3
+      
+  #     # Logs into Azure
+  #     - uses: azure/login@v1
+  #       name: Sign in to Azure
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  #     # Uses ARM preflight validation to check for problems
+  #     - uses: azure/arm-deploy@v1
+  #       name: Run what-if
+  #       with:
+  #         resourceGroupName: rg-azureResume
+  #         region: eastus2
+  #         failOnStdErr: false
+  #         template: ./deploy/modules/cdn.bicep
+  #         parameters: ./deploy/modules/cdn.parameters.json
+  #         # additionalArguments: --what-if
+    
+  # enableHTTPS:
+  #   runs-on: ubuntu-latest
+  #   needs: createCDN
+  #   steps:
+
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v3
+      
+  #     # Logs into Azure
+  #     - uses: azure/login@v1
+  #       name: Sign in to Azure
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  #     # Runs Azure CLI to enable static website and copy files to container    
+  #     - uses: azure/CLI@v1
+  #       name: Enable HTTPS
+  #       with:
+  #         inlineScript: |
+  #           az cdn custom-domain enable-https -g rg-azureResume --profile-name ashearinresumecdn --endpoint-name ashearinresume -n customDomain --min-tls-version 1.2
+
+  # buildCosmosDb:
+  #   runs-on: ubuntu-latest
+  #   needs: enable-https
+  #   steps:
+
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v3
+      
+  #     # Logs into Azure
+  #     - uses: azure/login@v1
+  #       name: Sign in to Azure
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  #     # Deploys Cosmos Db
+  #     - uses: azure/arm-deploy@v1
+  #       name: Run Cosmos Db deployment
+  #       with:
+  #         resourceGroupName: rg-azureResume
+  #         region: eastus2
+  #         failOnStdErr: false
+  #         template: ./deploy/modules/cosmos.bicep
+  #         parameters: ./deploy/modules/cosmos.parameters.json
+
+  # buildFunction:
+  #   runs-on: ubuntu-latest
+  #   needs: buildCosmosDb
+  #   steps:
+
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - uses: actions/checkout@v3
+      
+  #     # Logs into Azure
+  #     - uses: azure/login@v1
+  #       name: Sign in to Azure
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  #     # Deploys Function App
+  #     - uses: azure/arm-deploy@v1
+  #       name: Run Function deployment
+  #       with:
+  #         resourceGroupName: rg-azureResume
+  #         region: eastus2
+  #         failOnStdErr: false
+  #         template: ./deploy/modules/functionMain.bicep
+  #         parameters: ./deploy/modules/functionMain.parameters.json
+
+  #     # Runs Azure CLI to deploy function zip   
+  #     - uses: azure/CLI@v1
+  #       name: Deploy function files to function app
+  #       with:
+  #         inlineScript: |
+  #           az functionapp deployment source config-zip -g rg-azureResume -n fnapp-resume-m4hlhzfsttuqg --src "./backend/api/function.zip"
