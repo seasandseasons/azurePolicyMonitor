@@ -78,12 +78,16 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       
+      - name: Archive files echo
+        run: |
+          echo "The build id is: ${{ env.Build.BuildId }}"
+
       # Uploads zip file
       - uses: actions/upload-artifact@v3
         with:
           name: "${{ env.Build.BuildId }}.zip"
           path: "${{ env.functionWorkingDirectory }}"
-          artifact_type: zip
+          #artifact_type: zip
 
 
   # createCDN:
