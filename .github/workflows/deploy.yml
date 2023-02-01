@@ -11,7 +11,7 @@ on:
         required: true
 
 env: 
-  functionWorkingDirectory: ./function
+  functionWorkingDirectory: ./function/
 
 permissions:
   id-token: none
