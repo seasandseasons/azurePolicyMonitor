@@ -1,4 +1,4 @@
-name: deploy resource group and storage account
+name: deploy project
 
 on: 
   workflow_dispatch:
