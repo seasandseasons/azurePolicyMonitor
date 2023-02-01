@@ -78,17 +78,12 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       
-      - name: Archive files echo
-        run: |
-          echo "The build id is: ${{ github.run_id }}"
-
       # Uploads zip file
       - uses: actions/upload-artifact@v3
         with:
-          name: "${{ github.run_id }}.zip"
+          name: function.zip
           path: "${{ env.functionWorkingDirectory }}"
           #artifact_type: zip
-
 
   # createCDN:
   #   runs-on: ubuntu-latest
