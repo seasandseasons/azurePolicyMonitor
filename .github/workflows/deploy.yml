@@ -17,7 +17,7 @@ env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: ./function/
 
 permissions:
-  id-token: none
+  id-token: write
   contents: read
 
 jobs:
