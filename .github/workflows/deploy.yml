@@ -80,7 +80,7 @@ jobs:
         if [ -f extensions.csproj ]; then
             dotnet build extensions.csproj --runtime ubuntu-latest --output ./bin
         fi
-      working-directory: ${{ env.functionWorkingDirectory }}
+      working-directory: "${{ env.functionWorkingDirectory }}"
 
     - name: Use Python 3.6
       uses: actions/setup-python@v2
@@ -90,7 +90,7 @@ jobs:
     - name: Install application dependencies
       run: |
         pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
-      working-directory: ${{ env.functionWorkingDirectory }}
+      working-directory: "${{ env.functionWorkingDirectory }}"
   
   createFunctionZip:
     runs-on: ubuntu-latest
