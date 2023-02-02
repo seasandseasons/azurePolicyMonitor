@@ -13,7 +13,7 @@ jobs:
     uses: seasandseasons/Workflows/.github/workflows/lint.yml@ce5d29ee397122e26b702326380658e8786df351
 
   # Calls deploy workflow to deploy
-  deploy:
+  deploy-project:
     uses: ./.github/workflows/deploy.yml
     needs: lint
     secrets:

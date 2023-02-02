@@ -10,15 +10,15 @@ on:
       AZURE_SUBSCRIPTION_ID:
         required: true
 
+permissions:
+  id-token: write
+  contents: read
+  
 env: 
   functionWorkingDirectory: ./function/
   functionAppName: policyMonitor
   AZURE_FUNCTIONAPP_NAME: bureau-mgmt-policyCompliance-func
   AZURE_FUNCTIONAPP_PACKAGE_PATH: ./function/
-
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   # validate:
