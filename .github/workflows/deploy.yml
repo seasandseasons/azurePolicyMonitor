@@ -13,6 +13,8 @@ on:
 env: 
   functionWorkingDirectory: ./function/
   functionAppName: policyMonitor
+  AZURE_FUNCTIONAPP_NAME: bureau-mgmt-policyCompliance-func
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: ./function/
 
 permissions:
   id-token: none
@@ -73,7 +75,6 @@ jobs:
 
   build_and_install:
     runs-on: ubuntu-latest
-
     steps:
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -93,8 +94,27 @@ jobs:
 
     - name: Install application dependencies
       run: |
+        python -m pip install --upgrade pip
         pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
       working-directory: "${{ env.functionWorkingDirectory }}"
+
+       # Logs into Azure
+    - uses: azure/login@v1
+      name: Sign in to Azure
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: 'Run Azure Functions Action'
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        #publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        scm-do-build-during-deployment: true
+        enable-oryx-build: true
   
   createFunctionZip:
     runs-on: ubuntu-latest
@@ -107,9 +127,8 @@ jobs:
       # Uploads zip file
       - uses: actions/upload-artifact@v3
         with:
-          name: function.zip
+          name: function
           path: "${{ env.functionWorkingDirectory }}"
-          #artifact_type: zip
 
   # functionDeployment:
   #   name: Build Solution
