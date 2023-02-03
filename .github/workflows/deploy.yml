@@ -19,6 +19,7 @@ env:
   functionAppName: policyMonitor
   AZURE_FUNCTIONAPP_NAME: bureau-mgmt-policyCompliance-func
   AZURE_FUNCTIONAPP_PACKAGE_PATH: ./function/
+  AZURE_FUNCTIONAPP_ENTRYPOINT: ./function/policyMonitor
 
 jobs:
 #   validate:
@@ -94,9 +95,11 @@ jobs:
 
     - name: Install application dependencies
       run: |
+        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
         python -m pip install --upgrade pip
-        pip install --target="./.python_packages/lib/site-packages" -r ./requirements.txt
-      working-directory: "${{ env.functionWorkingDirectory }}"
+        pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+        popd
+      #working-directory: "${{ env.functionWorkingDirectory }}"
 
        # Logs into Azure
     - uses: azure/login@v1
@@ -112,6 +115,7 @@ jobs:
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+        entrypoint: 
         #publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
         scm-do-build-during-deployment: true
         enable-oryx-build: true
