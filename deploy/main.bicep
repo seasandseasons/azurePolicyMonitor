@@ -120,5 +120,18 @@ module functionApp 'modules/functionApp.bicep' = {
     logAnalyticsNamespaceName: logAnalyticsNamespaceName
     logAnaWsKey: keyVault.getSecret(logAnalyticsWs.outputs.logAnalyticsWorkspaceSecretName)
   }
-  dependsOn: [ logAnalyticsWs ]
+  dependsOn: [ 
+    logAnalyticsWs
+   ]
+}
+
+module eventGrid 'modules/eventGrid.bicep' = {
+  scope: rg
+  name: 'eventGridDeployment'
+  params: {
+    appName: appName
+  }
+  dependsOn: [
+    functionApp
+  ]
 }

@@ -1,7 +1,7 @@
 param eventGridSubName string = 'policyInsightsSub'
 param topicName string = 'policyInsightsTopic'
 param appName string
-param functionAppResourceId string = '${resourceGroup().id}/providers/Microsoft.Web/sites/${appName}'
+param functionAppResourceId string = '${resourceGroup().id}/providers/Microsoft.Web/sites/${appName}/functions/policyMonitor'
 
 resource evtTopic 'Microsoft.EventGrid/systemTopics@2022-06-15' = {
   name: topicName
@@ -13,7 +13,8 @@ resource evtTopic 'Microsoft.EventGrid/systemTopics@2022-06-15' = {
 }
 
 resource evtGridSub 'Microsoft.EventGrid/systemTopics/eventSubscriptions@2022-06-15' = {
-  name: '${evtTopic.name}/${eventGridSubName}'
+  name: eventGridSubName
+  parent: evtTopic
   properties: {
     eventDeliverySchema: 'EventGridSchema'
     destination: {

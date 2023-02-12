@@ -97,7 +97,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
           value: 'true'
         }
         {
-          name: 'APPINSIGHTS_CONNECTION_STRING'
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: appInsights.properties.ConnectionString
         }
         {
