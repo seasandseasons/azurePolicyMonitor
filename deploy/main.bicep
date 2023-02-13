@@ -1,5 +1,10 @@
+@description('Log Analytics Workspace name')
 param logAnalyticsNamespaceName string
+
+@description('Storage Account name')
 param storageAccountName string
+
+@description('Resource region location')
 param location string
 
 @description('Storage SKU')
@@ -8,27 +13,58 @@ param skuName string
 @description('Resource Group name for this deployment')
 param rgName string
 
+@description('Application Insights name')
 param appInsightsName string
+
+@description('Key Vault name')
 param keyvaultName string
+
+@description('Tenant ID')
 param tenantId string
+
+@description('Key Vault property')
 param enabledForDeployment bool
+
+@description('Key Vault property')
 param enabledForTemplateDeployment bool
+
+@description('Key Vault property')
 param enabledForDiskEncryption bool
+
+@description('Key Vault property')
 param enabledRbacAuthorization bool
+
+@description('Key Vault Access Policy')
 param accessPolicies array
+
+@description('Key Vault disable public access')
 param publicNetworkAccess string
+
+@description('Key Vault property')
 param enableSoftDelete bool
+
+@description('Key Vault property')
 param softDeleteRetentionInDays int
+
+@description('Key Vault property - Deny if IP not matched. Azure services can bypass.')
 param networkAcls object
+
+@description('Function App Python version')
 param linuxFxVersion string
 
 @description('Function App name')
 param appName string
 
+@description('Function worker runtime')
 param runtime string
+
+@description('Function App Key Vault secret name')
 param functionAppKeySecretName string
+
+@description('Log Analytics Workspace Key Vault secret name')
 param logAnalysticsWorkspaceSecretName string
 
+@description('Storage Account Sku')
 @allowed([
   'StorageV2'
 ]
@@ -91,6 +127,7 @@ module logAnalyticsWs 'modules/logAnalyticsWs.bicep' = {
   }
 }
 
+// Deploy Application Insights resource for Function and connect to Log Analytics Workspace
 module appInsights 'modules/appInsights.bicep' = {
   name: 'appInsightsDeployment'
   scope: rg
@@ -100,11 +137,14 @@ module appInsights 'modules/appInsights.bicep' = {
     logAnalyticsNamespaceName: logAnalyticsNamespaceName
   }
 }
+
+// Reference existing Key Vault for functionApp module
 resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' existing = {
   name: keyvaultName
   scope: rg
 } 
 
+// Deploy Function App. Dependant on Log Analytics Workspace deployment
 module functionApp 'modules/functionApp.bicep' = {
   name: 'functionAppDeployment'
   scope: rg
@@ -125,6 +165,7 @@ module functionApp 'modules/functionApp.bicep' = {
    ]
 }
 
+// Deploy Event Grid
 module eventGrid 'modules/eventGrid.bicep' = {
   scope: rg
   name: 'eventGridDeployment'
