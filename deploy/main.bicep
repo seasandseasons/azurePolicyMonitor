@@ -92,7 +92,7 @@ module stg 'modules/storage.bicep' = {
 }
 
 // Deploy key vault using module
-// Access for user, deployment Service Principal, functionapp
+// Access for user, deployment Service Principal
 module kv 'modules/keyvault.bicep' = {
   name: keyvaultName
   scope: rg
